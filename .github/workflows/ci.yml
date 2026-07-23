@@ -1,0 +1,39 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# The repo is the fx-exchange WORKSPACE; the API is one app inside it.
+# Every `run:` step happens in fx-app-spring/ (where the pom is).
+# `uses:` steps see the repo root, unaffected.
+defaults:
+  run:
+    working-directory: fx-app-spring
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: fx-app-spring/pom.xml   # key the cache on OUR pom, not the root
+      - name: Build and test (unit + slice + Testcontainers IT)
+        run: mvn -B verify
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: fx-app-spring/pom.xml
+      - name: Validate
+        run: mvn -B validate
