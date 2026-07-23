@@ -25,7 +25,7 @@ class ConversionServiceTest {
         when(repo.findLatestForPair("EUR", "USD"))
             .thenReturn(Optional.of(new Rate(1, "EUR", "USD", 1.0818, LocalDate.of(2026, 1, 12), null)));
         var result = new ConversionService(repo).convert("EUR", "USD", 123.45);
-        assertEquals(999.99, result.converted(), 1e-9);   // 123.45 * 1.0818 = 133.5482 -> 133.55
+        assertEquals(133.55, result.converted(), 1e-9);   // 123.45 * 1.0818 = 133.5482 -> 133.55
         assertEquals("EUR/USD", result.pair());
         assertEquals(1.34, result.fee(), 1e-9);            // retail 1% of 133.55, rounded
         assertEquals(132.21, result.net(), 1e-9);
